@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useEffect, useState } from "react";
@@ -25,7 +26,7 @@ export default function LoginPage() {
       await login(username, password);
       router.push("/feed");
     } catch (err: any) {
-      setError(err.response.data.detail || err.response.data.message || "Login failed. Please try again.");
+      setError("Login failed. Please try again.");
     } finally {
       setLoading(false);
     }
