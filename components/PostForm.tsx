@@ -1,12 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import api from "@/lib/api";
 
 export default function PostForm({ onPostCreated }: any) {
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!error) return;
+
+    const timer = setTimeout(() => {
+      setError("");
+    }, 4000);
+
+    return () => clearTimeout(timer);
+  }, [error]);
 
   const submit = async () => {
     if (!content.trim()) return;
@@ -17,7 +27,11 @@ export default function PostForm({ onPostCreated }: any) {
       onPostCreated(res.data);
       setContent("");
     } catch (err: any) {
-      const reason = err.response?.data?.detail?.reason || err.response?.data?.message || "Post rejected";
+      const reason =
+        err.response?.data?.detail?.message ||
+        err.response?.data?.message ||
+        "Post rejected";
+      console.log(err.response.data.detail.scores);
       setError(reason);
     } finally {
       setLoading(false);

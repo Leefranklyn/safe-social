@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import api from "@/lib/api";
 
 interface CommentFormProps {
@@ -9,10 +9,24 @@ interface CommentFormProps {
   onNewComment: (comment: any) => void;
 }
 
-export default function CommentForm({ postId, parentId, onNewComment }: CommentFormProps) {
+export default function CommentForm({
+  postId,
+  parentId,
+  onNewComment,
+}: CommentFormProps) {
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!error) return;
+
+    const timer = setTimeout(() => {
+      setError("");
+    }, 4000);
+
+    return () => clearTimeout(timer);
+  }, [error]);
 
   const submit = async () => {
     if (!content.trim()) return;
@@ -31,7 +45,7 @@ export default function CommentForm({ postId, parentId, onNewComment }: CommentF
       setContent("");
     } catch (err: any) {
       const reason =
-        err.response?.data?.detail?.reason ||
+        err.response?.data?.detail?.message ||
         err.response?.data?.detail?.message ||
         "Comment rejected – please review your content";
       setError(reason);
